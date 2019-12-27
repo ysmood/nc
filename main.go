@@ -10,23 +10,23 @@ import (
 
 func main() {
 	app := kit.TasksNew("nc", "a simple netcat tool")
-	app.Version("v0.0.1")
+	app.Version("v0.0.2")
 
 	kit.Tasks().App(app).Add(
 		kit.Task("serve", "run as server for both tcp and udp on the same port").
 			Init(func(cmd kit.TaskCmd) func() {
 				cmd.Default()
-				addr := cmd.Arg("address", "the host and port address").Default(":8080").String()
+				addr := cmd.Arg("address", "the host and port address").Default(":8080").TCP()
 				return func() {
-					serve(*addr)
+					serve((*addr).String())
 				}
 			}),
 		kit.Task("send", "send tcp or udp package").
 			Init(func(cmd kit.TaskCmd) func() {
-				addr := cmd.Arg("address", "the host and port address").Default(":8080").String()
+				addr := cmd.Arg("address", "the host and port address").Default(":8080").TCP()
 				protocol := cmd.Flag("protocol", "protocol to use").Short('p').Default("tcp").String()
 				return func() {
-					send(*protocol, *addr)
+					send(*protocol, (*addr).String())
 				}
 			}),
 	).Do()
